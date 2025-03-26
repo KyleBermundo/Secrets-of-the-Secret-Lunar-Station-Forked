@@ -120,7 +120,7 @@ public class UndoMovement : MonoBehaviour, IOnInventoryChange
         else return false;
     }
 
-    void SetObserverCharges(int undoCharges,bool undoUsed)
+    void SetObserverCharges(int undoCharges,bool undoUsed) //another place to edit maybe
     {
         foreach (var i in iOnUndoChargesChange)
         {

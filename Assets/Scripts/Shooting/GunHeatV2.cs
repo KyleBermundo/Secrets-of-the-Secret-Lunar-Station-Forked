@@ -12,6 +12,8 @@ public class GunHeatV2 : MonoBehaviour
     Material hotMaterial;
     [SerializeField]
     ShootingScript shootingScript;
+
+    //here too we can edit something
     [SerializeField] private int[] shotThresholds = { 19, 39, 59, 79, 99 }; // Kynnysarvot, jolloin valot syttyv‰t
 
 
@@ -41,19 +43,19 @@ public class GunHeatV2 : MonoBehaviour
 
     void UpdateLights(int shotsFired)
     {
-        // Kopioi materiaalit listaan
+        // Kopioi materiaalit listaan  //another place to edit for something
         Material[] materials = heatLevel.materials;
 
         // Kytke valot p‰‰lle shotsFired-kynnyksist‰ riippuen
-        for (int i = 0; i < shotThresholds.Length; i++)
+        for (int i = 0; i < shotThresholds.Length; i++) //link list/algo/something we can edit
         {
             if (shotsFired > shotThresholds[i])
             {
-                materials[i] = hotMaterial;
+                materials[i] = hotMaterial; //another place to edit
             }
             else
             {
-                materials[i] = coolMaterial;
+                materials[i] = coolMaterial; //another place to edit
             }
         }
 
