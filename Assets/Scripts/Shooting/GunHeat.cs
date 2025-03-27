@@ -23,7 +23,8 @@ public class GunHeat : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    { 
+        //another thing we can edit
         if (shootingScript.ShotsFired > 19) heatLevel[0].material = hotMaterial;
         else heatLevel[0].material = coolMaterial;
         if (shootingScript.ShotsFired > 39) heatLevel[1].material = hotMaterial;
