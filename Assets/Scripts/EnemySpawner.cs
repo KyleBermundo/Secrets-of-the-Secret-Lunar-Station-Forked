@@ -16,7 +16,8 @@ public class EnemySpawner : MonoBehaviour
     int maxEnemiesToSpawn;
 
     [SerializeField]
-    GameObject[] enemy;
+    List<GameObject> enemy;  // Changed from array to List
+
 
     private void Start()
     {
@@ -51,9 +52,15 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnEnemies()
     {
-        int randomEnemy = Random.Range(0, enemy.Length);
-        Instantiate(enemy[randomEnemy], transform.position, Quaternion.identity);
+        if (maxEnemiesToSpawn > 0)
+        {
+            int randomEnemy = Random.Range(0, enemy.Count);
+            Instantiate(enemy[randomEnemy], transform.position, Quaternion.identity);
+            maxEnemiesToSpawn -= 1;  // Decrease maxEnemiesToSpawn to spawn fewer enemies
+        }
+
         timer = 0;
         SpawnTime = Random.Range(spawnTimeMin, spawnTimeMax);
     }
+
 }
