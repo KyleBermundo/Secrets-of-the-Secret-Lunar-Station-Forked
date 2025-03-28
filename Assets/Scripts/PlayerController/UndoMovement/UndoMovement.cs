@@ -10,7 +10,7 @@ using UnityEngine.SocialPlatforms.Impl;
 public class UndoMovement : MonoBehaviour, IOnInventoryChange
 {
     private List<IOnUndoChargesChange> iOnUndoChargesChange = new List<IOnUndoChargesChange>();
-    Stack<Vector3> undoStack = new Stack<Vector3>();
+    LinkedList<Vector3> undoStack = new LinkedList<Vector3>();
     [SerializeField]
     int undoDistance = 10;
     CharacterController characterController;
@@ -38,7 +38,7 @@ public class UndoMovement : MonoBehaviour, IOnInventoryChange
         characterController = GetComponent<CharacterController>();
         undoInd = FindObjectOfType<UndoIndicator>();
         SetObserverCharges (undoCharges, undoUsed = false);
-        undoStack.Push (startPos);
+        undoStack.AddLast (startPos);
     }
 
     public void AddUndoMovementListener(IOnUndoChargesChange listener)
@@ -54,45 +54,45 @@ public class UndoMovement : MonoBehaviour, IOnInventoryChange
     // Update is called once per frame
     void Update()
     {
-
         if (CheckDistancePeek() && characterController.isGrounded)
         {
-            undoStack.Push(transform.position);
+            undoStack.AddLast(transform.position); // Changed from Push() to AddLast()
         }
 
-
-        Debug.DrawRay(undoStack.Peek(), Vector3.up, Color.yellow);
+        Debug.DrawRay(undoStack.Last.Value, Vector3.up, Color.yellow);
 
         if (Input.GetKeyDown(KeyCode.F) && hasUndo)
         {
-            Debug.Log("Undo kutsuttiin");
-            if (undoStack.Count > 1 && undoCharges > 0 && Vector3.Distance(transform.position, undoStack.Peek()) > (undoDistance / 2))
+            Debug.Log("Undo called");
+            if (undoStack.Count > 1 && undoCharges > 0 && Vector3.Distance(transform.position, undoStack.Last.Value) > (undoDistance / 2))
             {
                 UndoLastMovement();
             }
-                
-            else if (undoStack.Count > 2 && undoCharges > 0 && Vector3.Distance(transform.position, undoStack.Peek()) < (undoDistance / 2))
+            else if (undoStack.Count > 2 && undoCharges > 0 && Vector3.Distance(transform.position, undoStack.Last.Value) < (undoDistance / 2))
             {
-                undoStack.Pop();
+                undoStack.RemoveLast(); // Changed from Pop() to RemoveLast()
                 UndoLastMovement();
             }
             else if (undoStack.Count <= 1) Debug.Log("No positions available!");
             else if (undoCharges <= 0) Debug.Log("Not enough charges");
         }
-
     }
 
     void UndoLastMovement()
     {
-        lastUndo = undoStack.Peek();
-        transform.position = undoStack.Pop();
-        undoCharges--;
-        SetObserverCharges(undoCharges, undoUsed = true);
-        undoUsed = false;
-
-        if (undoStack.Count < 2 && characterController.isGrounded)
+        if (undoStack.Count > 0)
         {
-            undoStack.Push(transform.position);
+            lastUndo = undoStack.Last.Value;
+            transform.position = lastUndo;
+            undoStack.RemoveLast(); // Changed from Pop() to RemoveLast()
+            undoCharges--;
+            SetObserverCharges(undoCharges, undoUsed = true);
+            undoUsed = false;
+
+            if (undoStack.Count < 2 && characterController.isGrounded)
+            {
+                undoStack.AddLast(transform.position); // Changed from Push() to AddLast()
+            }
         }
     }
 
@@ -111,12 +111,12 @@ public class UndoMovement : MonoBehaviour, IOnInventoryChange
 
     public void ClearStack()
     {
-        undoStack.Clear();
+       undoStack.Clear();
     }
 
     bool CheckDistancePeek()
     {
-        if (Vector3.Distance(transform.position, undoStack.Peek()) > undoDistance) return true;
+        if (Vector3.Distance(transform.position, undoStack.Last.Value) > undoDistance) return true;
         else return false;
     }
 
@@ -130,20 +130,20 @@ public class UndoMovement : MonoBehaviour, IOnInventoryChange
 
     public void PushZero()
     {
-        undoStack.Push(startPos);
+        undoStack.AddLast(startPos);
     }
 
     public void PushCurrent()
     {
-        undoStack.Push(transform.position);
+        undoStack.AddLast(transform.position);
     }
 
     public void OnUndoPickUp()
     {
         undoCharges = 1;
         undoStack.Clear();
-        undoStack.Push(startPos);
-        undoStack.Push(startPos);
+        undoStack.AddLast(startPos);
+        undoStack.AddLast(startPos);
 
     }
 
